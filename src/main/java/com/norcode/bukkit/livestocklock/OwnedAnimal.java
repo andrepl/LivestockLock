@@ -26,7 +26,7 @@ public class OwnedAnimal {
         this.ownerName = ownerName;
     }
 
-    public boolean allowAccess(Player player) {
-        return player.getName().equals(ownerName) || plugin.getAccessList(ownerName).contains(player.getName());
+    public boolean allowAccess(String player) {
+        return ownerName.equals(player) || plugin.getAccessList(ownerName).contains(player);
     }
 }

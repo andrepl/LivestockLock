@@ -30,6 +30,7 @@ public class LivestockLock extends JavaPlugin {
         saveConfig();
         loadConfig();
         initializeDatastore();
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
     }
 
     public void onDisable() {
@@ -64,7 +65,6 @@ public class LivestockLock extends JavaPlugin {
         ConfigurationSection sect;
         short eid;
         for (String s: animalSection.getKeys(false)) {
-
             sect = animalSection.getConfigurationSection(s);
             String eType = sect.getString("entity-type-id", "");
             eid = -1;
