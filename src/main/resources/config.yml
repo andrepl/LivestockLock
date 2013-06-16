@@ -1,0 +1,14 @@
+allowed-entity-types:
+  pig:
+    entity-type-id: 90
+    cost-money: 0.0
+    cost-xp: 0
+    cost-item:
+      ==: Item
+            values:
+              chance: .5
+            stack:
+              ==: org.bukkit.inventory.ItemStack
+              type: GOLD_CARROT
+              damage: 0
+              amount: 1
