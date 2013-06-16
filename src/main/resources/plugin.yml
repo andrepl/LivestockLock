@@ -22,18 +22,23 @@ permissions:
     default: op
     children:
       livestocklock.commands.claim: true
-      livestocklock.commands.remove: true
+      livestocklock.commands.abandon: true
       livestocklock.commands.addplayer: true
       livestocklock.commands.removeplayer: true
       livestocklock.commands.list: true
 
   livestocklock.commands.claim:
     default: true
-  livestocklock.commands.remove:
+  livestocklock.commands.abandon:
     default: true
   livestocklock.commands.addplayer:
     default: true
   livestocklock.commands.removeplayer:
     default: true
+  livestocklock.commands.list:
+    default: true
+
+  livestocklock.claimforothers:
+    default: op
 
 

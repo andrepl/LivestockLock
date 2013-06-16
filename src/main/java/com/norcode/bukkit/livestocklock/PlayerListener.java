@@ -44,7 +44,13 @@ public class PlayerListener implements Listener {
         if (plugin.getOwnedAnimals().containsKey(animal.getUniqueId())) {
             // This animal is owned, check for permission.
             OwnedAnimal oa = plugin.getOwnedAnimal(animal.getUniqueId());
-            if (!oa.allowAccess(event.getPlayer().getName())) {
+            if (player.hasMetadata("livestocklock-abandon-pending")) {
+                if (oa.getOwnerName().equals(event.getPlayer().getName()) || event.getPlayer().hasPermission("livestocklock.claimforothers")) {
+                    event.getPlayer().sendMessage("This animal has been abandoned.");
+                    plugin.getAllowedAnimals().remove(animal.getUniqueId());
+                    return;
+                }
+            } else if (!oa.allowAccess(event.getPlayer().getName())) {
                 player.sendMessage("Sorry, that animal belongs to " + oa.getOwnerName());
                 event.setCancelled(true);
             }
@@ -57,6 +63,7 @@ public class PlayerListener implements Listener {
                     event.setCancelled(true);
                     if (ca.takeCost(player)) {
                         OwnedAnimal oa = new OwnedAnimal(plugin, animal.getUniqueId(), ownerName);
+                        oa.setEntityType(animal.getType());
                         plugin.getOwnedAnimals().put(animal.getUniqueId(), oa);
                     } else {
                         player.sendMessage("Sorry, you don't have " + ca.getCostDescription());

@@ -3,6 +3,7 @@ package com.norcode.bukkit.livestocklock.commands;
 import com.norcode.bukkit.livestocklock.LivestockLock;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,9 +34,11 @@ public class ClaimCommand extends BaseCommand {
             }
             owner = matches.get(0);
         }
-
-
-        return false;
+        // remove a pending abandonment selection if there is one
+        ((Player) sender).removeMetadata("livestocklock-abandon-pending", plugin);
+        ((Player) sender).setMetadata("livestocklock-claim-pending", new FixedMetadataValue(plugin, owner));
+        sender.sendMessage("Now go punch an animal to claim it.");
+        return true;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.norcode.bukkit.livestocklock;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class OwnedAnimal {
     private LivestockLock plugin;
     private UUID entityId;
     private String ownerName;
+    private EntityType entityType;
 
     public OwnedAnimal(LivestockLock plugin, UUID entityId, String ownerName) {
         this.plugin = plugin;
@@ -28,5 +30,17 @@ public class OwnedAnimal {
 
     public boolean allowAccess(String player) {
         return ownerName.equals(player) || plugin.getAccessList(ownerName).contains(player);
+    }
+
+    public UUID getEntityId() {
+        return entityId;
+    }
+
+    public EntityType getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(EntityType entityType) {
+        this.entityType = entityType;
     }
 }
