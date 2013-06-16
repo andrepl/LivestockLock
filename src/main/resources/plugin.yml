@@ -1,0 +1,39 @@
+main: ${project.main}
+name: ${project.name}
+author: ${project.authors}
+version ${project.version}
+
+commands:
+  livestocklock:
+    aliases: [lsl, claimpet]
+    permission: livestocklock.use
+
+permissions:
+  livestocklock.use:
+    default: true
+    description: allows access to the main command. [required for basic usage]
+  livestocklock.admin:
+    default: op
+    children:
+      livestocklock.claimforothers: true
+      livestocklock.commands.*: true
+
+  livestocklock.commands.*:
+    default: op
+    children:
+      livestocklock.commands.claim: true
+      livestocklock.commands.remove: true
+      livestocklock.commands.addplayer: true
+      livestocklock.commands.removeplayer: true
+      livestocklock.commands.list: true
+
+  livestocklock.commands.claim:
+    default: true
+  livestocklock.commands.remove:
+    default: true
+  livestocklock.commands.addplayer:
+    default: true
+  livestocklock.commands.removeplayer:
+    default: true
+
+
