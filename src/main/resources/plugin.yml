@@ -1,7 +1,7 @@
 main: ${project.main}
 name: ${project.name}
 author: ${project.authors}
-version ${project.version}
+version: ${project.version}
 
 commands:
   livestocklock:
