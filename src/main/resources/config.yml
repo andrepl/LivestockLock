@@ -1,3 +1,9 @@
+debug: false
+
+group-limits:
+  member: 3
+  vip: 5
+
 allowed-entity-types:
   pig:
     entity-type-id: 90
