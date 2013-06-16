@@ -65,6 +65,7 @@ public class PlayerListener implements Listener {
                         OwnedAnimal oa = new OwnedAnimal(plugin, animal.getUniqueId(), ownerName);
                         oa.setEntityType(animal.getType());
                         plugin.saveOwnedAnimal(oa);
+                        player.sendMessage("This " + oa.getEntityType().name() + " now belongs to you.");
                     } else {
                         player.sendMessage("Sorry, you don't have " + ca.getCostDescription());
                     }
