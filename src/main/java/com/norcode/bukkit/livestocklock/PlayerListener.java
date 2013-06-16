@@ -30,7 +30,7 @@ public class PlayerListener implements Listener {
                 damager = (Player) p.getShooter();
             }
         }
-        if (damager != null && !oa.allowAccess(damager)) {
+        if (damager != null && !oa.allowAccess(damager.getName())) {
             event.setCancelled(true);
             damager.sendMessage("That animal belongs to " + oa.getOwnerName());
             return;
@@ -44,7 +44,7 @@ public class PlayerListener implements Listener {
         if (plugin.getOwnedAnimals().containsKey(animal.getUniqueId())) {
             // This animal is owned, check for permission.
             OwnedAnimal oa = plugin.getOwnedAnimal(animal.getUniqueId());
-            if (!oa.allowAccess(event.getPlayer())) {
+            if (!oa.allowAccess(event.getPlayer().getName())) {
                 player.sendMessage("Sorry, that animal belongs to " + oa.getOwnerName());
                 event.setCancelled(true);
             }
