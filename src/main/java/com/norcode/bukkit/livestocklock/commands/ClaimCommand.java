@@ -43,7 +43,7 @@ public class ClaimCommand extends BaseCommand {
         }
         // remove a pending abandonment selection if there is one
         ((Player) sender).removeMetadata("livestocklock-abandon-pending", plugin);
-        ((Player) sender).setMetadata("livestocklock-claim-pending", new FixedMetadataValue(plugin, owner));
+        ((Player) sender).setMetadata("livestocklock-claim-pending", new FixedMetadataValue(plugin, owner.getName()));
         sender.sendMessage("Now go punch an animal to claim it.");
         return true;
     }

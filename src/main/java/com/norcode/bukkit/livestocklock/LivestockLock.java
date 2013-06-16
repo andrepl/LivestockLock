@@ -1,13 +1,15 @@
 package com.norcode.bukkit.livestocklock;
 import com.norcode.bukkit.livestocklock.OwnedAnimal;
-import com.norcode.bukkit.livestocklock.commands.BaseCommand;
+import com.norcode.bukkit.livestocklock.commands.*;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,6 +38,12 @@ public class LivestockLock extends JavaPlugin {
         loadConfig();
         initializeDatastore();
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        // setup commands
+        new AbandonCommand(this);
+        new AddPlayerCommand(this);
+        new ClaimCommand(this);
+        new ListCommand(this);
+        new RemovePlayerCommand(this);
     }
 
     public void onDisable() {
@@ -109,17 +117,19 @@ public class LivestockLock extends JavaPlugin {
             limits.put(groupName, groupSect.getInt(groupName));
         }
         groupLimits = entriesSortedByValues(limits, true);
-
         debugMode = getConfig().getBoolean("debug");
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        debug(label);
         if (args.length == 0) {
             return false;
         }
         LinkedList<String> params = new LinkedList<String>(Arrays.asList(args));
         String sub = params.pop().toLowerCase();
+
         if (!subCommands.containsKey(sub)) {
+            debug("No such subcommand: " + sub);
             return false;
         }
         BaseCommand subcommand = subCommands.get(sub);
@@ -153,16 +163,20 @@ public class LivestockLock extends JavaPlugin {
         return null;
     }
 
-    public int getPlayerClaimLimit(Player player) {
-        if (vaultPerm == null) {
-            return groupLimits.first().getValue();
+    public void debug(String s) {
+        if (debugMode) {
+            getLogger().info(s);
         }
-        for (Map.Entry<String, Integer> e: groupLimits) {
-            if (vaultPerm.playerInGroup(player, e.getKey())) {
-                return e.getValue();
+    }
+    public int getPlayerClaimLimit(Player player) {
+        if (vaultPerm != null) {
+            for (Map.Entry<String, Integer> e: groupLimits) {
+                if (vaultPerm.playerInGroup(player, e.getKey())) {
+                    return e.getValue();
+                }
             }
         }
-        return -1;
+        return groupLimits.first().getValue();
     }
 
     public Map<UUID, OwnedAnimal> getOwnedAnimals() {
