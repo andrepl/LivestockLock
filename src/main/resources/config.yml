@@ -1,7 +1,5 @@
 debug: false
 
-default-claim-limit: 1
-
 group-limits:
   member: 3
   vip: 5
