@@ -23,15 +23,19 @@ public class PlayerListener implements Listener {
                 player.sendMessage("Sorry, that animal belongs to " + oa.getOwnerName());
                 event.setCancelled(true);
             }
-        } else if (plugin.getAllowedAnimals().containsKey(animal.getType().getTypeId())) {
-            if (player.hasPermission("livestocklock.claim." + animal.getType().getTypeId())) {
-                ClaimableAnimal ca = plugin.getAllowedAnimals().get(animal.getType().getTypeId());
-                event.setCancelled(true);
-                if (ca.takeCost(player)) {
-                    OwnedAnimal oa = new OwnedAnimal(animal.getUniqueId(), player.getName());
-                    plugin.getOwnedAnimals().put(animal.getUniqueId(), oa);
-                } else {
-                    player.sendMessage("Sorry, you don't have " + ca.getCostDescription());
+        } else if (player.hasMetadata("livestocklock-claim-pending")) {
+            String ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
+            player.removeMetadata("livestocklock-claim-pending", plugin);
+            if (plugin.getAllowedAnimals().containsKey(animal.getType().getTypeId())) {
+                if (player.hasPermission("livestocklock.claim." + animal.getType().getTypeId())) {
+                    ClaimableAnimal ca = plugin.getAllowedAnimals().get(animal.getType().getTypeId());
+                    event.setCancelled(true);
+                    if (ca.takeCost(player)) {
+                        OwnedAnimal oa = new OwnedAnimal(animal.getUniqueId(), ownerName);
+                        plugin.getOwnedAnimals().put(animal.getUniqueId(), oa);
+                    } else {
+                        player.sendMessage("Sorry, you don't have " + ca.getCostDescription());
+                    }
                 }
             }
         }

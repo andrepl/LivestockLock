@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class OwnedAnimal {
+
+    private LivestockLock plugin;
     private UUID entityId;
     private String ownerName;
-    private List<String> accessList = new ArrayList<String>();
 
-    public OwnedAnimal(UUID entityId, String ownerName) {
+    public OwnedAnimal(LivestockLock plugin, UUID entityId, String ownerName) {
+        this.plugin = plugin;
         this.entityId = entityId;
         this.ownerName = ownerName;
     }
@@ -24,15 +26,7 @@ public class OwnedAnimal {
         this.ownerName = ownerName;
     }
 
-    public List<String> getAccessList() {
-        return accessList;
-    }
-
-    public void setAccessList(List<String> accessList) {
-        this.accessList = accessList;
-    }
-
     public boolean allowAccess(Player player) {
-        return player.getName().equals(ownerName) || accessList.contains(player.getName());
+        return player.getName().equals(ownerName) || plugin.getAccessList(ownerName).contains(player.getName());
     }
 }

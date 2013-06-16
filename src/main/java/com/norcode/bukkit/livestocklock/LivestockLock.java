@@ -13,6 +13,8 @@ public class LivestockLock extends JavaPlugin {
 
     private Map<UUID, OwnedAnimal> ownedAnimals = new HashMap<UUID, OwnedAnimal>();
     private HashMap<Short, ClaimableAnimal> allowedAnimals = new HashMap<Short, ClaimableAnimal>();
+    private HashMap<String, List<String>> accessLists = new HashMap<String, List<String>>();
+
     private boolean debugMode = false;
     private Economy economy = null;
     private DataStore datastore;
@@ -93,4 +95,12 @@ public class LivestockLock extends JavaPlugin {
     public Economy getEconomy() {
         return economy;
     }
+
+    public List<String> getAccessList(String ownerName) {
+        if (!accessLists.containsKey(ownerName)) {
+            return new ArrayList<String>(0);
+        }
+        return accessLists.get(ownerName);
+    }
+
 }
