@@ -31,7 +31,7 @@ public class PlayerListener implements Listener {
                     ClaimableAnimal ca = plugin.getAllowedAnimals().get(animal.getType().getTypeId());
                     event.setCancelled(true);
                     if (ca.takeCost(player)) {
-                        OwnedAnimal oa = new OwnedAnimal(animal.getUniqueId(), ownerName);
+                        OwnedAnimal oa = new OwnedAnimal(plugin, animal.getUniqueId(), ownerName);
                         plugin.getOwnedAnimals().put(animal.getUniqueId(), oa);
                     } else {
                         player.sendMessage("Sorry, you don't have " + ca.getCostDescription());

@@ -1,8 +1,7 @@
-package com.norcode.bukkit.livestocklock;
+package com.norcode.bukkit.livestocklock.commands;
 
-import org.bukkit.command.Command;
+import com.norcode.bukkit.livestocklock.LivestockLock;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
@@ -11,7 +10,7 @@ import java.util.List;
 public class ClaimCommand extends BaseCommand {
 
     public ClaimCommand(LivestockLock plugin) {
-        super(plugin);
+        super(plugin, "claim");
     }
 
     @Override

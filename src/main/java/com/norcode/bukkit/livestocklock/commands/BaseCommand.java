@@ -1,5 +1,6 @@
-package com.norcode.bukkit.livestocklock;
+package com.norcode.bukkit.livestocklock.commands;
 
+import com.norcode.bukkit.livestocklock.LivestockLock;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -11,9 +12,12 @@ import java.util.List;
 public abstract class BaseCommand implements TabExecutor {
 
     protected LivestockLock plugin;
+    protected String name;
 
-    public BaseCommand(LivestockLock plugin) {
+    public BaseCommand(LivestockLock plugin, String name) {
         this.plugin = plugin;
+        this.name = name;
+        this.plugin.registerSubcommand(name, this);
     }
 
     @Override
@@ -30,4 +34,8 @@ public abstract class BaseCommand implements TabExecutor {
 
     public abstract boolean onCommand(CommandSender sender, String label, LinkedList<String> args);
     public abstract List<String> onTabComplete(CommandSender sender, String label, LinkedList<String> args);
+
+    public String getName() {
+        return name;
+    }
 }
