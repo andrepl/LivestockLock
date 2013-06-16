@@ -7,6 +7,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class ClaimCommand extends BaseCommand {
 
@@ -33,6 +34,12 @@ public class ClaimCommand extends BaseCommand {
                 return true;
             }
             owner = matches.get(0);
+        }
+
+        List<UUID> alreadyOwned = plugin.getOwnedAnimals(owner.getName());
+        if (alreadyOwned.size() >= plugin.getPlayerClaimLimit(owner)) {
+            sender.sendMessage((owner == sender ? "You aren't" : owner.getName() + " isn't") + " allowed to own any more animals.");
+            return true;
         }
         // remove a pending abandonment selection if there is one
         ((Player) sender).removeMetadata("livestocklock-abandon-pending", plugin);

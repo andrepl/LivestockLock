@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class ListCommand extends BaseCommand {
     public ListCommand(LivestockLock plugin) {
@@ -37,10 +38,8 @@ public class ListCommand extends BaseCommand {
         }
         List<String> accessList = plugin.getAccessList(owner);
         List<OwnedAnimal> ownedAnimals = new LinkedList<OwnedAnimal>();
-        for (OwnedAnimal oa: plugin.getOwnedAnimals().values()) {
-            if (oa.getOwnerName().equals(owner)) {
-                ownedAnimals.add(oa);
-            }
+        for (UUID uuid: plugin.getOwnedAnimals(owner)) {
+            ownedAnimals.add(plugin.getOwnedAnimal(uuid));
         }
         sender.sendMessage(ChatColor.GOLD + "Claimed Animals for " + owner);
         if (ownedAnimals.size() == 0) {

@@ -1,6 +1,7 @@
 package com.norcode.bukkit.livestocklock;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ public class DataStore {
         for (UUID uuid: ownedAnimals.keySet()) {
             ConfigurationSection petSection = animalSection.createSection(uuid.toString());
             petSection.set("owner", ownedAnimals.get(uuid).getOwnerName());
+            petSection.set("entity-type", ownedAnimals.get(uuid).getEntityType().name());
         }
     }
 
@@ -60,6 +62,7 @@ public class DataStore {
             HashMap<UUID, OwnedAnimal> ownedAnimals = new HashMap<UUID, OwnedAnimal>();
             for (String uuid: animalSection.getKeys(false)) {
                 OwnedAnimal oa = new OwnedAnimal(plugin, UUID.fromString(uuid), animalSection.getConfigurationSection(uuid).getString("owner"));
+                oa.setEntityType(EntityType.valueOf(animalSection.getConfigurationSection(uuid).getString("entity-type")));
                 ownedAnimals.put(UUID.fromString(uuid), oa);
             }
             return ownedAnimals;
