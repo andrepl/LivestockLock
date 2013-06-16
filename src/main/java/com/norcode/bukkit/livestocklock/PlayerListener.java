@@ -1,8 +1,12 @@
 package com.norcode.bukkit.livestocklock;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public class PlayerListener implements Listener {
@@ -13,6 +17,27 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
+    @EventHandler(ignoreCancelled=true)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        OwnedAnimal oa = plugin.getOwnedAnimal(event.getEntity().getUniqueId());
+        if (oa == null) return;
+        Player damager = null;
+        if (event.getDamager().getType() == EntityType.PLAYER) {
+            damager = (Player) event.getDamager();
+        } else if (event.getEntity() instanceof Projectile) {
+            Projectile p = (Projectile) event.getDamager();
+            if (p.getShooter() instanceof Player) {
+                damager = (Player) p.getShooter();
+            }
+        }
+        if (damager != null && !oa.allowAccess(damager)) {
+            event.setCancelled(true);
+            damager.sendMessage("That animal belongs to " + oa.getOwnerName());
+            return;
+        }
+    }
+
+    @EventHandler(ignoreCancelled=true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         Entity animal = event.getRightClicked();
