@@ -12,6 +12,7 @@ permissions:
   livestocklock.use:
     default: true
     description: allows access to the main command. [required for basic usage]
+
   livestocklock.admin:
     default: op
     children:
@@ -26,7 +27,10 @@ permissions:
       livestocklock.commands.addplayer: true
       livestocklock.commands.removeplayer: true
       livestocklock.commands.list: true
+      livestocklock.commands.ignoreclaims: true
 
+  livestocklock.commands.ignoreclaims:
+    default: op
   livestocklock.commands.claim:
     default: true
   livestocklock.commands.abandon:

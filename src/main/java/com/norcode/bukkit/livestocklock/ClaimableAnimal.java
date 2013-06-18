@@ -95,5 +95,6 @@ public class ClaimableAnimal {
             player.getInventory().removeItem(costItem);
         }
         return true;
+
     }
 }

@@ -29,6 +29,12 @@ public class OwnedAnimal {
     }
 
     public boolean allowAccess(String player) {
+        Player p = plugin.getServer().getPlayerExact(player);
+        if (p != null && p.isOnline()) {
+            if (p.hasMetadata("livestocklock-ignoring-claims")) {
+                return true;
+            }
+        }
         return ownerName.equals(player) || plugin.getAccessList(ownerName).contains(player);
     }
 

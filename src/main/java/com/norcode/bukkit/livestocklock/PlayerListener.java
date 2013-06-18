@@ -1,5 +1,6 @@
 package com.norcode.bukkit.livestocklock;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -56,6 +57,10 @@ public class PlayerListener implements Listener {
                 }
             } else if (!oa.allowAccess(player.getName())) {
                 player.sendMessage("Sorry, that animal belongs to " + oa.getOwnerName());
+                Player owner = plugin.getServer().getPlayerExact(oa.getOwnerName());
+                if (owner != null && owner.isOnline()) {
+                    owner.sendMessage(player.getName() + " is trying to use your animal at " + formatLoc(player.getLocation()));
+                }
                 event.setCancelled(true);
             }
         } else if (player.hasMetadata("livestocklock-claim-pending")) {
@@ -76,5 +81,9 @@ public class PlayerListener implements Listener {
                 }
             }
         }
+    }
+
+    public static String formatLoc(Location l) {
+        return l.getWorld().getName() + ": " + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ();
     }
 }
