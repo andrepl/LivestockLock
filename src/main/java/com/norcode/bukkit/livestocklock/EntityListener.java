@@ -74,7 +74,7 @@ public class EntityListener implements Listener {
         } else if (player.hasMetadata("livestocklock-claim-pending")) {
             String ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
             player.removeMetadata("livestocklock-claim-pending", plugin);
-            if (plugin.getAllowedAnimals().containsKey(animal.getType().getTypeId())) {
+            if (plugin.getClaimableAnimals().containsKey(animal.getType().getTypeId())) {
                 if (player.hasPermission("livestocklock.claim." + animal.getType().getTypeId())) {
                     if (animal instanceof Tameable && !((Tameable) animal).isTamed()) {
                         if (plugin.getConfig().getBoolean("require-taming", true)) {
@@ -89,7 +89,7 @@ public class EntityListener implements Listener {
                             return;
                         }
                     }
-                    ClaimableAnimal ca = plugin.getAllowedAnimals().get(animal.getType().getTypeId());
+                    ClaimableAnimal ca = plugin.getClaimableAnimals().get(animal.getType().getTypeId());
                     event.setCancelled(true);
                     if (ca.takeCost(player)) {
                         OwnedAnimal oa = new OwnedAnimal(plugin, animal.getUniqueId(), ownerName);
