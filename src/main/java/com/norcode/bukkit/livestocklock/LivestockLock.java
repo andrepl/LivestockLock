@@ -1,15 +1,12 @@
 package com.norcode.bukkit.livestocklock;
-import com.norcode.bukkit.livestocklock.OwnedAnimal;
 import com.norcode.bukkit.livestocklock.commands.*;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,7 +34,7 @@ public class LivestockLock extends JavaPlugin {
         saveConfig();
         loadConfig();
         initializeDatastore();
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new EntityListener(this), this);
         // setup commands
         new AbandonCommand(this);
         new AddPlayerCommand(this);
@@ -95,11 +92,11 @@ public class LivestockLock extends JavaPlugin {
             String eType = sect.getString("entity-type-id", "");
             eid = -1;
             try {
-                eid = Short.parseShort(s);
+                eid = Short.parseShort(eType);
             } catch (IllegalArgumentException ex) {
-                EntityType et = EntityType.valueOf(s.toUpperCase());
+                EntityType et = EntityType.valueOf(eType.toUpperCase());
                 if (et == null) {
-                    getLogger().warning("Unknown EntityType: " + s);
+                    getLogger().warning("Unknown EntityType: " + eType);
                     continue;
                 }
                 eid = et.getTypeId();

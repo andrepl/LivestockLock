@@ -8,15 +8,26 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-public class PlayerListener implements Listener {
+public class EntityListener implements Listener {
 
     LivestockLock plugin;
 
-    public PlayerListener(LivestockLock plugin) {
+    public EntityListener(LivestockLock plugin) {
         this.plugin = plugin;
     }
+
+    @EventHandler(ignoreCancelled=true)
+    public void onEntityDeath(EntityDeathEvent event) {
+        OwnedAnimal oa = plugin.getOwnedAnimal(event.getEntity().getUniqueId());
+        if (oa != null) {
+            plugin.removeOwnedAnimal(oa);
+        }
+    }
+
+
 
     @EventHandler(ignoreCancelled=true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
