@@ -38,7 +38,7 @@ public class ListCommand extends BaseCommand {
         }
         List<String> accessList = plugin.getAccessList(owner);
         List<OwnedAnimal> ownedAnimals = new LinkedList<OwnedAnimal>();
-        for (UUID uuid: plugin.getOwnedAnimals(owner)) {
+        for (UUID uuid: plugin.getOwnedAnimalIDs(owner)) {
             ownedAnimals.add(plugin.getOwnedAnimal(uuid));
         }
         sender.sendMessage(ChatColor.GOLD + "Claimed Animals for " + owner);

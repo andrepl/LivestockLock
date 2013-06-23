@@ -2,7 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.norcode.bukkit.livestocklock</groupId>
   <artifactId>LivestockLock</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3-SNAPSHOT</version>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.authors>metalhedd</project.authors>
@@ -10,6 +11,13 @@
     <project.softdepends>[Vault]</project.softdepends>
     <project.description>Protect your animals!</project.description>
   </properties>
+    <distributionManagement>
+        <repository>
+            <id>snapshots</id>
+            <name>mcgitlab snapshots</name>
+            <url>http://mcgitlab.norcode.com:8082/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </distributionManagement>
     <build>
         <resources>
           <resource>

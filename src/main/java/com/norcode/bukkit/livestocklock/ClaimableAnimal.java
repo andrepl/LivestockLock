@@ -2,6 +2,8 @@ package com.norcode.bukkit.livestocklock;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 public class ClaimableAnimal {
     LivestockLock plugin;
@@ -13,6 +15,16 @@ public class ClaimableAnimal {
     public ClaimableAnimal(LivestockLock plugin, short entityTypeId) {
         this.plugin = plugin;
         this.entityTypeId = entityTypeId;
+        setupPermission();
+    }
+
+    private void setupPermission() {
+        Permission perm = plugin.getServer().getPluginManager().getPermission("livestocklock.claim." + entityTypeId);
+        if (perm == null) {
+            perm = new Permission("livestocklock.claim." + entityTypeId, PermissionDefault.OP);
+            plugin.getServer().getPluginManager().addPermission(perm);
+            perm.addParent(plugin.getWildcardPermission(), true);
+        }
     }
 
     public int getCostXP() {

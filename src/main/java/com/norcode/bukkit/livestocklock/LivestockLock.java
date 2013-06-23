@@ -7,11 +7,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
-
 
 public class LivestockLock extends JavaPlugin {
 
@@ -19,7 +19,7 @@ public class LivestockLock extends JavaPlugin {
     private HashMap<Short, ClaimableAnimal> allowedAnimals = new HashMap<Short, ClaimableAnimal>();
     private HashMap<String, List<String>> accessLists = new HashMap<String, List<String>>();
     private HashMap<String, List<UUID>> ownedAnimalsByPlayer = new HashMap<String, List<UUID>>();
-
+    private org.bukkit.permissions.Permission wildcardPermission;
     private boolean debugMode = false;
     private Economy economy = null;
     private Permission vaultPerm = null;
@@ -32,6 +32,8 @@ public class LivestockLock extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         initializeVault();
         saveConfig();
+        wildcardPermission = new org.bukkit.permissions.Permission("livestocklock.claim.*", PermissionDefault.OP);
+        getServer().getPluginManager().addPermission(wildcardPermission);
         loadConfig();
         initializeDatastore();
         getServer().getPluginManager().registerEvents(new EntityListener(this), this);
@@ -80,7 +82,7 @@ public class LivestockLock extends JavaPlugin {
         }
     }
 
-    public void loadConfig() {
+    private void loadConfig() {
         // Load set of allowed entities
         ConfigurationSection animalSection = getConfig().getConfigurationSection("allowed-entity-types");
         allowedAnimals.clear();
@@ -160,11 +162,23 @@ public class LivestockLock extends JavaPlugin {
         return null;
     }
 
-    public void debug(String s) {
+    void debug(String s) {
         if (debugMode) {
             getLogger().info(s);
         }
     }
+
+
+    Map<UUID, OwnedAnimal> getOwnedAnimals() {
+        return ownedAnimals;
+    }
+
+    /**
+     * get the max number of animals a player can claim.
+     *
+     * @param player
+     * @return the max number of animals a player can claim.
+     */
     public int getPlayerClaimLimit(Player player) {
         if (vaultPerm != null) {
             for (Map.Entry<String, Integer> e: groupLimits) {
@@ -176,22 +190,32 @@ public class LivestockLock extends JavaPlugin {
         return groupLimits.first().getValue();
     }
 
-    public Map<UUID, OwnedAnimal> getOwnedAnimals() {
-        return ownedAnimals;
-    }
-
+    /**
+     * get the OwnedAnimal object if the given entity is owned.
+     *
+     * @param uniqueId the entity's unique id
+     * @return an OwnedAnimal object representing this entity, or null if this entity is not owned.
+     */
     public OwnedAnimal getOwnedAnimal(UUID uniqueId) {
         return ownedAnimals.get(uniqueId);
     }
 
-    public Map<Short, ClaimableAnimal> getAllowedAnimals() {
+    Map<Short, ClaimableAnimal> getClaimableAnimals() {
         return allowedAnimals;
     }
 
-    public Economy getEconomy() {
+    Economy getEconomy() {
         return economy;
     }
 
+    /**
+     * get the specified player's access list.
+     *
+     * get a list of the names of all players who have access to the given player's animals.
+     *
+     * @param ownerName
+     * @return
+     */
     public List<String> getAccessList(String ownerName) {
         if (!accessLists.containsKey(ownerName)) {
             return new ArrayList<String>(0);
@@ -199,9 +223,67 @@ public class LivestockLock extends JavaPlugin {
         return accessLists.get(ownerName);
     }
 
+    /**
+     * save the specified OwnedAnimal to the datastore.
+     *
+     * @param ownedAnimal an OwnedAnimal instance to be saved.
+     */
+    public void saveOwnedAnimal(OwnedAnimal ownedAnimal) {
+        this.ownedAnimals.put(ownedAnimal.getEntityId(), ownedAnimal);
+        if (!ownedAnimalsByPlayer.containsKey(ownedAnimal.getOwnerName())) {
+            ownedAnimalsByPlayer.put(ownedAnimal.getOwnerName(), new LinkedList<UUID>());
+        }
+        ownedAnimalsByPlayer.get(ownedAnimal.getOwnerName()).add(ownedAnimal.getEntityId());
+    }
+
+    /**
+     * remove an OwnedAnimal from the datastore.
+     *
+     * @param ownedAnimal an OwnedAnimal instance to be removed from the datastore.
+     */
+    public void removeOwnedAnimal(OwnedAnimal ownedAnimal) {
+        this.ownedAnimals.remove(ownedAnimal.getEntityId());
+        this.ownedAnimalsByPlayer.get(ownedAnimal.getOwnerName()).remove(ownedAnimal.getEntityId());
+    }
+
+    /**
+     * get a list of id's for all animals belonging to owner
+     *
+     * returns a list of the UniqueIDs of all animal's owned by the specified player.
+     * @param owner the name of the player
+     * @return a list of UUID's, one for each animal owned by this player.
+     */
+    public List<UUID> getOwnedAnimalIDs(String owner) {
+        if (!ownedAnimalsByPlayer.containsKey(owner)) return new LinkedList<UUID>();
+        return this.ownedAnimalsByPlayer.get(owner);
+    }
+
+
+    /**
+     * get a list of all OwnedAnimals belonging to the given player.
+     *
+     * @param owner the name of the player
+     * @return a list of OwnedAnimal instances
+     */
+    public List<OwnedAnimal> getOwnedAnimals(String owner) {
+        List<UUID> ids = getOwnedAnimalIDs(owner);
+        List<OwnedAnimal> results = new ArrayList<OwnedAnimal>(ids.size());
+        for (UUID u: ids) {
+            results.add(getOwnedAnimal(u));
+        }
+        return results;
+    }
+
+    /**
+     * register a subcommand under the main /lsl command.
+     *
+     * @param name the name the command will be available under
+     * @param baseCommand a BaseCommand instance
+     */
     public void registerSubcommand(String name, BaseCommand baseCommand) {
         this.subCommands.put(name.toLowerCase(), baseCommand);
     }
+
 
     static <K,V extends Comparable<? super V>>
     SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map, final boolean reverse) {
@@ -223,21 +305,8 @@ public class LivestockLock extends JavaPlugin {
         return sortedEntries;
     }
 
-    public void saveOwnedAnimal(OwnedAnimal oa) {
-        this.ownedAnimals.put(oa.getEntityId(), oa);
-        if (!ownedAnimalsByPlayer.containsKey(oa.getOwnerName())) {
-            ownedAnimalsByPlayer.put(oa.getOwnerName(), new LinkedList<UUID>());
-        }
-        ownedAnimalsByPlayer.get(oa.getOwnerName()).add(oa.getEntityId());
-    }
 
-    public void removeOwnedAnimal(OwnedAnimal oa) {
-        this.ownedAnimals.remove(oa.getEntityId());
-        this.ownedAnimalsByPlayer.get(oa.getOwnerName()).remove(oa.getEntityId());
-    }
-
-    public List<UUID> getOwnedAnimals(String owner) {
-        if (!ownedAnimalsByPlayer.containsKey(owner)) return new LinkedList<UUID>();
-        return this.ownedAnimalsByPlayer.get(owner);
+    org.bukkit.permissions.Permission getWildcardPermission() {
+        return wildcardPermission;
     }
 }

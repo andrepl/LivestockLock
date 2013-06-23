@@ -1,10 +1,7 @@
 package com.norcode.bukkit.livestocklock;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -79,6 +76,19 @@ public class EntityListener implements Listener {
             player.removeMetadata("livestocklock-claim-pending", plugin);
             if (plugin.getAllowedAnimals().containsKey(animal.getType().getTypeId())) {
                 if (player.hasPermission("livestocklock.claim." + animal.getType().getTypeId())) {
+                    if (animal instanceof Tameable && !((Tameable) animal).isTamed()) {
+                        if (plugin.getConfig().getBoolean("require-taming", true)) {
+                            player.sendMessage("You can't claim a wild animal.");
+                            event.setCancelled(true);
+                            return;
+                        }
+                    } else if ((animal instanceof Ageable) && !((Ageable) animal).isAdult()) {
+                        if (plugin.getConfig().getBoolean("require-adulthood", true)) {
+                            player.sendMessage("You can't claim a baby animal.");
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                     ClaimableAnimal ca = plugin.getAllowedAnimals().get(animal.getType().getTypeId());
                     event.setCancelled(true);
                     if (ca.takeCost(player)) {

@@ -36,7 +36,7 @@ public class ClaimCommand extends BaseCommand {
             owner = matches.get(0);
         }
 
-        List<UUID> alreadyOwned = plugin.getOwnedAnimals(owner.getName());
+        List<UUID> alreadyOwned = plugin.getOwnedAnimalIDs(owner.getName());
         if (alreadyOwned.size() >= plugin.getPlayerClaimLimit(owner)) {
             sender.sendMessage((owner == sender ? "You aren't" : owner.getName() + " isn't") + " allowed to own any more animals.");
             return true;

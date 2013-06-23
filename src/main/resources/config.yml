@@ -1,29 +1,35 @@
 debug: false
+require-adulthood: true
+require-taming: true
 
 group-limits:
-  member: 3
-  vip: 5
+  member: 10
+  vip: 20
 
 allowed-entity-types:
   pig:
     entity-type-id: 90
-    cost-money: 0.0
+    cost-money: 5.0
     cost-xp: 0
-    cost-item:
-      ==: org.bukkit.inventory.ItemStack
-      type: GOLDEN_CARROT
   wolf:
     entity-type-id: 95
-    cost-money: 0.0
+    cost-money: 5.0
     cost-xp: 0
-    cost-item:
-      ==: org.bukkit.inventory.ItemStack
-      type: COOKED_BEEF
   cat:
     entity-type-id: 98
-    cost-money: 0.0
+    cost-money: 5.0
     cost-xp: 0
-    cost-item:
-      ==: org.bukkit.inventory.ItemStack
-      type: COOKED_FISH
+  cow:
+    entity-type-id: 92
+    cost-money: 5.0
+    cost-xp: 0
+  sheep:
+    entity-type-id: 91
+    cost-money: 5.0
+  mushroom-cow:
+    entity-type-id: 96
+    cost-money: 5.0
+  chicken:
+    entity-type-id: 93
+    cost-money: 5.0
 
