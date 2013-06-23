@@ -20,14 +20,26 @@ public class OwnedAnimal {
         this.ownerName = ownerName;
     }
 
+
+    /**
+     * get the animal owner's name
+     *
+     * @return the name of the player who owns this animal
+     */
     public String getOwnerName() {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
     }
 
+    /**
+     * check if the specified player is allowed to access this animal.
+     *
+     * @param player the player's name
+     * @return true if they should be allowed access, false if not.
+     */
     public boolean allowAccess(String player) {
         Player p = plugin.getServer().getPlayerExact(player);
         if (p != null && p.isOnline()) {
@@ -38,15 +50,26 @@ public class OwnedAnimal {
         return ownerName.equals(player) || plugin.getAccessList(ownerName).contains(player);
     }
 
+    /**
+     * get the entity's unique id
+     *
+     * @return UUID
+     */
     public UUID getEntityId() {
         return entityId;
     }
 
+    /**
+     * get the entity's EntityType
+     *
+     * @return the entitys type
+     */
     public EntityType getEntityType() {
         return entityType;
     }
 
-    public void setEntityType(EntityType entityType) {
+
+    void setEntityType(EntityType entityType) {
         this.entityType = entityType;
     }
 }

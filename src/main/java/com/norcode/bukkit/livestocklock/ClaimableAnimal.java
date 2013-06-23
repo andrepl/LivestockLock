@@ -6,6 +6,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 public class ClaimableAnimal {
+
     LivestockLock plugin;
     short entityTypeId;
     private int costXP = 0;
