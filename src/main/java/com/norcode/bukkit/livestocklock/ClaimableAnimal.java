@@ -60,7 +60,7 @@ public class ClaimableAnimal {
             desc.append(costXP);
             desc.append(" XP, ");
         }
-        if (costMoney > 0) {
+        if (costMoney > 0 && plugin.getEconomy() != null) {
             i++;
             desc.append(plugin.getEconomy().format(costMoney));
             desc.append(", ");

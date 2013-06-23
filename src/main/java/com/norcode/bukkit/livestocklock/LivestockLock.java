@@ -2,6 +2,7 @@ package com.norcode.bukkit.livestocklock;
 import com.norcode.bukkit.livestocklock.commands.*;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -10,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.*;
 
 public class LivestockLock extends JavaPlugin {
@@ -54,17 +54,21 @@ public class LivestockLock extends JavaPlugin {
     }
 
     private void initializeVault() {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
+        if (getServer().getPluginManager().getPlugin("Vault") != null) {
+            RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
+            if (economyProvider != null) {
+                economy = economyProvider.getProvider();
+            } else {
+                getLogger().warning("No appropriate economy plugin found.  Economy costs will not function.");
+            }
+            RegisteredServiceProvider<Permission> permProvider = getServer().getServicesManager().getRegistration(Permission.class);
+            if (permProvider != null) {
+                vaultPerm = permProvider.getProvider();
+            } else {
+                getLogger().warning("No appropriate permissions plugin found.  Group-based claim limits will not function.");
+            }
         } else {
-            getLogger().warning("No appropriate economy plugin found.  Economy costs will not function.");
-        }
-        RegisteredServiceProvider<Permission> permProvider = getServer().getServicesManager().getRegistration(Permission.class);
-        if (permProvider != null) {
-            vaultPerm = permProvider.getProvider();
-        } else {
-            getLogger().warning("No appropriate permissions plugin found.  Group-based claim limits will not function.");
+            getLogger().severe("Vault was not found.  Group based limits and economy costs will not function.");
         }
     }
 
@@ -185,6 +189,7 @@ public class LivestockLock extends JavaPlugin {
                 if (vaultPerm.playerInGroup(player, e.getKey())) {
                     return e.getValue();
                 }
+
             }
         }
         return groupLimits.first().getValue();
