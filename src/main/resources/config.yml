@@ -32,4 +32,7 @@ allowed-entity-types:
   chicken:
     entity-type-id: 93
     cost-money: 5.0
+  horse:
+    entity-type-id: 100
+    cost-money: 10
 

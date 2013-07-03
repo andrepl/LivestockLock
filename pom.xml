@@ -39,10 +39,6 @@
     </build>
   <repositories>
     <repository>
-      <id>bukkit-releases-repo</id>
-      <url>http://repo.bukkit.org/content/repositories/releases/</url>
-    </repository>
-    <repository>
       <id>vault-repo</id>
       <url>http://ci.herocraftonline.com/plugin/repository/everything</url>
     </repository>
@@ -51,7 +47,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
         <artifactId>craftbukkit</artifactId>
-        <version>1.5.2-R1.0</version>
+        <version>1.6.1-R0.1</version>
     </dependency>
     <dependency>
         <groupId>net.milkbowl.vault</groupId>
