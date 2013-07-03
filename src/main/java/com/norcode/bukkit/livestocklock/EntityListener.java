@@ -48,6 +48,7 @@ public class EntityListener implements Listener {
 
     @EventHandler(ignoreCancelled=true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        plugin.getLogger().info("Interact Entity: " + event.getRightClicked());
         Player player = event.getPlayer();
         Entity animal = event.getRightClicked();
         if (plugin.getOwnedAnimals().containsKey(animal.getUniqueId())) {
