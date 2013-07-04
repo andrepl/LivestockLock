@@ -48,7 +48,6 @@ public class EntityListener implements Listener {
 
     @EventHandler(ignoreCancelled=true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        plugin.getLogger().info("Interact Entity: " + event.getRightClicked());
         Player player = event.getPlayer();
         Entity animal = event.getRightClicked();
         if (plugin.getOwnedAnimals().containsKey(animal.getUniqueId())) {
@@ -75,6 +74,7 @@ public class EntityListener implements Listener {
         } else if (player.hasMetadata("livestocklock-claim-pending")) {
             String ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
             player.removeMetadata("livestocklock-claim-pending", plugin);
+            plugin.getLogger().info("Attempting to claim: " + animal.getType() + ", " + animal.getType().getTypeId());
             if (plugin.getClaimableAnimals().containsKey(animal.getType().getTypeId())) {
                 if (player.hasPermission("livestocklock.claim." + animal.getType().getTypeId())) {
                     if (animal instanceof Tameable && !((Tameable) animal).isTamed()) {
