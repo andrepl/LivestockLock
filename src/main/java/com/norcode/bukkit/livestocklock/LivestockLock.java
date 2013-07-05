@@ -32,7 +32,7 @@ public class LivestockLock extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         initializeVault();
         saveConfig();
-        wildcardPermission = new org.bukkit.permissions.Permission("livestocklock.claim.*", PermissionDefault.OP);
+        wildcardPermission = new org.bukkit.permissions.Permission("livestocklock.claim.*", PermissionDefault.TRUE);
         getServer().getPluginManager().addPermission(wildcardPermission);
         loadConfig();
         initializeDatastore();
