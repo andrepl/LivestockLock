@@ -6,7 +6,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+
+import java.util.List;
+import java.util.UUID;
 
 public class EntityListener implements Listener {
 
@@ -43,6 +47,35 @@ public class EntityListener implements Listener {
             event.setCancelled(true);
             damager.sendMessage("That animal belongs to " + oa.getOwnerName());
             return;
+        }
+    }
+
+    @EventHandler(ignoreCancelled=true)
+    public void onEntityTamed(EntityTameEvent event) {
+        event.getOwner();
+        AnimalTamer at;
+
+        if (!plugin.getOwnedAnimals().containsKey(event.getEntity().getType())) {
+            if (plugin.getClaimableAnimals().containsKey(event.getEntityType().getTypeId())) {
+                if (plugin.getConfig().getBoolean("auto-claim-on-tame", true)) {
+                    Player owner = plugin.getServer().getPlayerExact(event.getOwner().getName());
+                    List<UUID> alreadyOwned = plugin.getOwnedAnimalIDs(owner.getName());
+                    if (alreadyOwned.size() >= plugin.getPlayerClaimLimit(owner)) {
+                        owner.sendMessage("You aren't allowed to own any more animals.");
+                        return;
+                    }
+                    ClaimableAnimal ca = plugin.getClaimableAnimals().get(event.getEntity().getType().getTypeId());
+                    event.setCancelled(true);
+                    if (ca.takeCost(owner)) {
+                        OwnedAnimal oa = new OwnedAnimal(plugin, event.getEntity().getUniqueId(), owner.getName());
+                        oa.setEntityType(event.getEntity().getType());
+                        plugin.saveOwnedAnimal(oa);
+                        owner.sendMessage("This " + oa.getEntityType().name() + " now belongs to you.");
+                    } else {
+                        owner.sendMessage("Sorry, you don't have " + ca.getCostDescription());
+                    }
+                }
+            }
         }
     }
 
