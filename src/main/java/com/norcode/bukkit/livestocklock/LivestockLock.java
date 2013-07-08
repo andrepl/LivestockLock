@@ -136,7 +136,7 @@ public class LivestockLock extends JavaPlugin {
             return false;
         }
         BaseCommand subcommand = subCommands.get(sub);
-        if (!sender.hasPermission("livestocklock.command." + subcommand.getName())) {
+        if (!sender.hasPermission("livestocklock.commands." + subcommand.getName())) {
             sender.sendMessage("You don't have permission for that.");
             return true;
         }
@@ -149,7 +149,7 @@ public class LivestockLock extends JavaPlugin {
         if (params.size() == 1) {
             LinkedList<String> results = new LinkedList<String>();
             for (String k: subCommands.keySet()) {
-                if (k.toLowerCase().startsWith(params.peek()) && sender.hasPermission("livestocklock.command." + k.toLowerCase())) {
+                if (k.toLowerCase().startsWith(params.peek()) && sender.hasPermission("livestocklock.commands." + k.toLowerCase())) {
                     results.add(k);
                 }
             }
@@ -160,7 +160,7 @@ public class LivestockLock extends JavaPlugin {
             return null;
         }
         BaseCommand subcommand = subCommands.get(sub);
-        if (sender.hasPermission("livestocklock.command." + subcommand.getName().toLowerCase())) {
+        if (sender.hasPermission("livestocklock.commands." + subcommand.getName().toLowerCase())) {
             return subcommand.onTabComplete(sender, label + " " + sub, params);
         }
         return null;
