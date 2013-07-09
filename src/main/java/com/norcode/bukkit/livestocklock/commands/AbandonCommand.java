@@ -1,6 +1,7 @@
 package com.norcode.bukkit.livestocklock.commands;
 
 import com.norcode.bukkit.livestocklock.LivestockLock;
+import com.norcode.bukkit.livestocklock.OwnedAnimal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -22,8 +23,15 @@ public class AbandonCommand extends BaseCommand {
         }
         // remove a pending claim selection if there is one
         ((Player) sender).removeMetadata("livestocklock-claim-pending", plugin);
-        ((Player) sender).setMetadata("livestocklock-abandon-pending", new FixedMetadataValue(plugin, true));
-        sender.sendMessage("Now punch an animal to abandon it.");
+        if (args.size() == 1 && args.peek().toLowerCase().equals("all")) {
+            for (OwnedAnimal oa: plugin.getOwnedAnimals(sender.getName())) {
+                plugin.removeOwnedAnimal(oa);
+            }
+            sender.sendMessage("All of your animals have been abandoned.");
+        } else {
+            ((Player) sender).setMetadata("livestocklock-abandon-pending", new FixedMetadataValue(plugin, true));
+            sender.sendMessage("Now punch an animal to abandon it.");
+        }
         return true;
     }
 
