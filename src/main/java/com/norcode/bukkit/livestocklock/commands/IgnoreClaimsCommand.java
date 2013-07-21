@@ -8,9 +8,11 @@ import org.bukkit.metadata.FixedMetadataValue;
 import java.util.LinkedList;
 import java.util.List;
 
-public class IgnoreClaims extends BaseCommand {
-    public IgnoreClaims(LivestockLock plugin) {
-        super(plugin, "ignoreclaims");
+public class IgnoreClaimsCommand extends BaseCommand {
+    public IgnoreClaimsCommand(LivestockLock plugin) {
+        super(plugin, "ignoreclaims", new String[] {
+            "/<command> ignoreclaims - toggles whether you're currently ignoring claim protections."
+        });
     }
 
     @Override

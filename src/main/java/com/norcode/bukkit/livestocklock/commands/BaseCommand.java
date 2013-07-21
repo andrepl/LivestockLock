@@ -13,10 +13,12 @@ public abstract class BaseCommand implements TabExecutor {
 
     protected LivestockLock plugin;
     protected String name;
+    protected String[] usage;
 
-    public BaseCommand(LivestockLock plugin, String name) {
+    public BaseCommand(LivestockLock plugin, String name, String[] usage) {
         this.plugin = plugin;
         this.name = name;
+        this.usage = usage;
         this.plugin.registerSubcommand(name, this);
     }
 
@@ -37,5 +39,9 @@ public abstract class BaseCommand implements TabExecutor {
 
     public String getName() {
         return name;
+    }
+
+    public String[] getUsage() {
+        return usage;
     }
 }

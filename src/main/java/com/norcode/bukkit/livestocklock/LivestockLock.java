@@ -1,8 +1,8 @@
 package com.norcode.bukkit.livestocklock;
+
 import com.norcode.bukkit.livestocklock.commands.*;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,7 +11,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LivestockLock extends JavaPlugin {
 
@@ -26,6 +30,7 @@ public class LivestockLock extends JavaPlugin {
     private DataStore datastore;
     private HashMap<String, BaseCommand> subCommands = new HashMap<String, BaseCommand>();
     private SortedSet<Map.Entry<String, Integer>> groupLimits;
+    private long unusedClaimExpiry;
 
     public void onEnable() {
         saveDefaultConfig();
@@ -43,6 +48,8 @@ public class LivestockLock extends JavaPlugin {
         new ClaimCommand(this);
         new ListCommand(this);
         new RemovePlayerCommand(this);
+        new HelpCommand(this);
+        new IgnoreClaimsCommand(this);
     }
 
     public void onDisable() {
@@ -121,6 +128,24 @@ public class LivestockLock extends JavaPlugin {
         }
         groupLimits = entriesSortedByValues(limits, true);
         debugMode = getConfig().getBoolean("debug");
+        // parse expiry time.
+        String s = getConfig().getString("unused-claim-expiry", "0d");
+        Matcher m = Pattern.compile("(\\d+)([wdhm])").matcher(s);
+        long et = Long.parseLong(m.group(1));
+        if (m.matches()) {
+            if (m.group(2).equals("m")) {
+                unusedClaimExpiry = et * TimeUnit.MINUTES.toMillis(et);
+            } else if (m.group(2).equals("h")) {
+                unusedClaimExpiry = et * TimeUnit.HOURS.toMillis(et);
+            } else if (m.group(2).equals("d")) {
+                unusedClaimExpiry = et * TimeUnit.DAYS.toMillis(et);
+            } else if (m.group(2).equals("w")) {
+                unusedClaimExpiry = et * TimeUnit.DAYS.toMillis(et) * 7;
+            }
+        } else {
+            getLogger().warning("Unable to parse 'unused-claim-expiry' value from config.yml.");
+            unusedClaimExpiry = 0;
+        }
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -311,7 +336,23 @@ public class LivestockLock extends JavaPlugin {
     }
 
 
+    public Set<String> getSubcommands() {
+        return subCommands.keySet();
+    }
+
+    public BaseCommand getSubcommand(String name) {
+        return subCommands.get(name.toLowerCase());
+    }
+
     org.bukkit.permissions.Permission getWildcardPermission() {
         return wildcardPermission;
+    }
+
+    public long getExpiryTime() {
+        return unusedClaimExpiry;
+    }
+
+    public boolean isDespawnExpiredClaims() {
+        return getConfig().getBoolean("despawn-expired-claims", false);
     }
 }

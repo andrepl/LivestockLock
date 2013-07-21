@@ -3,8 +3,6 @@ package com.norcode.bukkit.livestocklock;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class OwnedAnimal {
@@ -13,6 +11,16 @@ public class OwnedAnimal {
     private UUID entityId;
     private String ownerName;
     private EntityType entityType;
+
+    public long getOwnerActivityTime() {
+        return ownerActivityTime;
+    }
+
+    public void setOwnerActivityTime(long ownerActivityTime) {
+        this.ownerActivityTime = ownerActivityTime;
+    }
+
+    private long ownerActivityTime;
 
     public OwnedAnimal(LivestockLock plugin, UUID entityId, String ownerName) {
         this.plugin = plugin;

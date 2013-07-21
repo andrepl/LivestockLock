@@ -57,12 +57,14 @@ public class DataStore {
     }
 
     public Map<UUID, OwnedAnimal> getOwnedAnimals() {
+        long now = System.currentTimeMillis();
         ConfigurationSection animalSection = accessor.getConfig().getConfigurationSection("owned-animals");
         if (animalSection != null) {
             HashMap<UUID, OwnedAnimal> ownedAnimals = new HashMap<UUID, OwnedAnimal>();
             for (String uuid: animalSection.getKeys(false)) {
                 OwnedAnimal oa = new OwnedAnimal(plugin, UUID.fromString(uuid), animalSection.getConfigurationSection(uuid).getString("owner"));
                 oa.setEntityType(EntityType.valueOf(animalSection.getConfigurationSection(uuid).getString("entity-type")));
+                oa.setOwnerActivityTime(animalSection.getConfigurationSection(uuid).getLong("owner-activity-time", now));
                 ownedAnimals.put(UUID.fromString(uuid), oa);
             }
             return ownedAnimals;

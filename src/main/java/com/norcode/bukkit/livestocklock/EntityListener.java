@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.List;
@@ -18,6 +19,23 @@ public class EntityListener implements Listener {
 
     public EntityListener(LivestockLock plugin) {
         this.plugin = plugin;
+    }
+
+    public void checkExpiry(Entity e) {
+        OwnedAnimal oa = plugin.getOwnedAnimal(e.getUniqueId());
+        if (oa == null) return;
+        if (plugin.getExpiryTime() > 0 && System.currentTimeMillis() - oa.getOwnerActivityTime() > plugin.getExpiryTime()) {
+            plugin.removeOwnedAnimal(oa);
+            if (plugin.isDespawnExpiredClaims()) {
+                e.remove();
+            }
+        }
+    }
+
+
+    @EventHandler
+    public void onEntityTarget(EntityTargetEvent event) {
+        checkExpiry(event.getEntity());
     }
 
     @EventHandler(ignoreCancelled=true)
@@ -32,6 +50,7 @@ public class EntityListener implements Listener {
 
     @EventHandler(ignoreCancelled=true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        checkExpiry(event.getEntity());
         OwnedAnimal oa = plugin.getOwnedAnimal(event.getEntity().getUniqueId());
         if (oa == null) return;
         Player damager = null;
@@ -52,10 +71,7 @@ public class EntityListener implements Listener {
 
     @EventHandler(ignoreCancelled=true)
     public void onEntityTamed(EntityTameEvent event) {
-        event.getOwner();
-        AnimalTamer at;
-
-        if (!plugin.getOwnedAnimals().containsKey(event.getEntity().getType())) {
+        if (!plugin.getOwnedAnimals().containsKey(event.getEntity().getUniqueId())) {
             if (plugin.getClaimableAnimals().containsKey(event.getEntityType().getTypeId())) {
                 if (plugin.getConfig().getBoolean("auto-claim-on-tame", true)) {
                     Player owner = plugin.getServer().getPlayerExact(event.getOwner().getName());
@@ -79,8 +95,10 @@ public class EntityListener implements Listener {
         }
     }
 
+
     @EventHandler(ignoreCancelled=true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        checkExpiry(event.getRightClicked());
         Player player = event.getPlayer();
         Entity animal = event.getRightClicked();
         if (plugin.getOwnedAnimals().containsKey(animal.getUniqueId())) {
@@ -103,7 +121,10 @@ public class EntityListener implements Listener {
                     owner.sendMessage(player.getName() + " is trying to use your animal at " + formatLoc(player.getLocation()));
                 }
                 event.setCancelled(true);
+                return;
             }
+            oa.setOwnerActivityTime(System.currentTimeMillis());
+            plugin.saveOwnedAnimal(oa);
         } else if (player.hasMetadata("livestocklock-claim-pending")) {
             String ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
             player.removeMetadata("livestocklock-claim-pending", plugin);

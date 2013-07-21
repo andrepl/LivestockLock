@@ -12,7 +12,11 @@ import java.util.UUID;
 public class ClaimCommand extends BaseCommand {
 
     public ClaimCommand(LivestockLock plugin) {
-        super(plugin, "claim");
+        super(plugin, "claim", new String[] {
+            "Claim an animal",
+            "/<command> claim - prompts you to click an animal you wish to claim.",
+            "/<command> claim <player> - prompts you to click an animal to claim on behalf of <player> (requires livestocklock.claimforothers permission)"
+        });
     }
 
     @Override

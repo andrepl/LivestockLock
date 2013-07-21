@@ -10,7 +10,10 @@ import java.util.List;
 public class RemovePlayerCommand extends BaseCommand {
 
     public RemovePlayerCommand(LivestockLock plugin) {
-        super(plugin, "removeplayer");
+        super(plugin, "removeplayer", new String[] {
+            "Remove a player from your trust list.",
+            "/<command> addplayer <player> - adds <player> to the list of players allowed to access your animals."
+        });
     }
 
     @Override

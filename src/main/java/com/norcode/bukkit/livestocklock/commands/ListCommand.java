@@ -12,7 +12,11 @@ import java.util.UUID;
 
 public class ListCommand extends BaseCommand {
     public ListCommand(LivestockLock plugin) {
-        super(plugin, "list");
+        super(plugin, "list", new String[] {
+            "List your claimed animals.",
+            "/<command> list - list all of your animals.",
+            "/<command> list <player> - list all of <player>'s animals."
+        });
     }
 
     @Override

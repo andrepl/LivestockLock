@@ -10,7 +10,10 @@ import java.util.List;
 public class AddPlayerCommand extends BaseCommand {
 
     public AddPlayerCommand(LivestockLock plugin) {
-        super(plugin, "addplayer");
+        super(plugin, "addplayer", new String[] {
+            "Adds a player to your trust list.",
+            "/<command> addplayer <player> - adds <player> to the list of players allowed to access your animals."
+        });
     }
 
     @Override
