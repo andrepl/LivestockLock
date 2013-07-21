@@ -55,6 +55,17 @@ public class LivestockLock extends JavaPlugin {
     public void onDisable() {
         if (datastore != null) {
             datastore.saveAccessLists(accessLists);
+            long now = System.currentTimeMillis();
+            long et = getExpiryTime();
+            if (et > 0) {
+                Iterator<Map.Entry<UUID, OwnedAnimal>> it = ownedAnimals.entrySet().iterator();
+                while(it.hasNext()) {
+                    Map.Entry<UUID, OwnedAnimal> e = it.next();
+                    if (e.getValue().getOwnerActivityTime() > et) {
+                        it.remove();
+                    }
+                }
+            }
             datastore.saveOwnedAnimals(ownedAnimals);
             datastore.onDisable();
         }
