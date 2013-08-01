@@ -1,6 +1,7 @@
 package com.norcode.bukkit.livestocklock;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -96,6 +97,7 @@ public class EntityListener implements Listener {
     }
 
 
+
     @EventHandler(ignoreCancelled=true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         checkExpiry(event.getRightClicked());
@@ -125,10 +127,10 @@ public class EntityListener implements Listener {
             }
             oa.setOwnerActivityTime(System.currentTimeMillis());
             plugin.saveOwnedAnimal(oa);
-        } else if (player.hasMetadata("livestocklock-claim-pending")) {
+        } else if (player.hasMetadata("livestocklock-claim-pending") ||
+                (plugin.getConfig().getBoolean("auto-claim-on-lead", false) && player.getItemInHand().getType().equals(Material.LEASH))) {
             String ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
             player.removeMetadata("livestocklock-claim-pending", plugin);
-            plugin.getLogger().info("Attempting to claim: " + animal.getType() + ", " + animal.getType().getTypeId());
             if (plugin.getClaimableAnimals().containsKey(animal.getType().getTypeId())) {
                 if (player.hasPermission("livestocklock.claim." + animal.getType().getTypeId())) {
                     if (animal instanceof Tameable && !((Tameable) animal).isTamed()) {

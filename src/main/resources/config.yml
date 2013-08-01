@@ -3,7 +3,8 @@ debug: false
 require-adulthood: true
 require-taming: true
 auto-claim-on-tame: true
-unused-claim-expiry: 30d
+auto-claim-on-lead: true
+unused-claim-expiry: 0d
 despawn-expired-claims: false
 
 group-limits:

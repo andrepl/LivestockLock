@@ -142,8 +142,8 @@ public class LivestockLock extends JavaPlugin {
         // parse expiry time.
         String s = getConfig().getString("unused-claim-expiry", "0d");
         Matcher m = Pattern.compile("(\\d+)([wdhm])").matcher(s);
-        long et = Long.parseLong(m.group(1));
         if (m.matches()) {
+            long et = Long.parseLong(m.group(1));
             if (m.group(2).equals("m")) {
                 unusedClaimExpiry = et * TimeUnit.MINUTES.toMillis(et);
             } else if (m.group(2).equals("h")) {
