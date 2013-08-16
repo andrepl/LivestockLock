@@ -129,8 +129,11 @@ public class EntityListener implements Listener {
             plugin.saveOwnedAnimal(oa);
         } else if (player.hasMetadata("livestocklock-claim-pending") ||
                 (plugin.getConfig().getBoolean("auto-claim-on-lead", false) && player.getItemInHand().getType().equals(Material.LEASH))) {
-            String ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
-            player.removeMetadata("livestocklock-claim-pending", plugin);
+            String ownerName = player.getName();
+            if (player.hasMetadata("livestocklock-claim-pending")) {
+                ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
+                player.removeMetadata("livestocklock-claim-pending", plugin);
+            }
             if (plugin.getClaimableAnimals().containsKey(animal.getType().getTypeId())) {
                 if (player.hasPermission("livestocklock.claim." + animal.getType().getTypeId())) {
                     if (animal instanceof Tameable && !((Tameable) animal).isTamed()) {
