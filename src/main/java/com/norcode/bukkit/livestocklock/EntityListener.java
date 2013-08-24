@@ -100,10 +100,12 @@ public class EntityListener implements Listener {
 
     @EventHandler(ignoreCancelled=true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        plugin.debug("Interact Event!");
         checkExpiry(event.getRightClicked());
         Player player = event.getPlayer();
         Entity animal = event.getRightClicked();
         if (plugin.getOwnedAnimals().containsKey(animal.getUniqueId())) {
+            plugin.debug("Clicked animal is already owned?");
             // This animal is owned, check for permission.
             OwnedAnimal oa = plugin.getOwnedAnimal(animal.getUniqueId());
             if (player.hasMetadata("livestocklock-abandon-pending")) {
@@ -128,7 +130,9 @@ public class EntityListener implements Listener {
             oa.setOwnerActivityTime(System.currentTimeMillis());
             plugin.saveOwnedAnimal(oa);
         } else if (player.hasMetadata("livestocklock-claim-pending") ||
-                (plugin.getConfig().getBoolean("auto-claim-on-lead", true) && event.getPlayer().getItemInHand().equals(Material.LEASH))) {
+                (plugin.getConfig().getBoolean("auto-claim-on-lead", true) &&
+                        event.getPlayer().getItemInHand().getType().equals(Material.LEASH))) {
+            plugin.debug("Potential Claim Attempt.");
             String ownerName = player.getName();
             if (player.hasMetadata("livestocklock-claim-pending")) {
                 ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
@@ -167,6 +171,8 @@ public class EntityListener implements Listener {
                     }
                 }
             }
+        } else {
+            plugin.debug(event.getPlayer().getItemInHand() + " in hand, cfg: " + plugin.getConfig().getBoolean("auto-claim-on-lead", true));
         }
     }
 
