@@ -128,7 +128,7 @@ public class EntityListener implements Listener {
             oa.setOwnerActivityTime(System.currentTimeMillis());
             plugin.saveOwnedAnimal(oa);
         } else if (player.hasMetadata("livestocklock-claim-pending") ||
-                (plugin.getConfig().getBoolean("auto-claim-on-lead", false) && player.getItemInHand().getType().equals(Material.LEASH))) {
+                (plugin.getConfig().getBoolean("auto-claim-on-lead", true) && event.getPlayer().getItemInHand().equals(Material.LEASH))) {
             String ownerName = player.getName();
             if (player.hasMetadata("livestocklock-claim-pending")) {
                 ownerName = player.getMetadata("livestocklock-claim-pending").get(0).asString();
@@ -150,7 +150,13 @@ public class EntityListener implements Listener {
                         }
                     }
                     ClaimableAnimal ca = plugin.getClaimableAnimals().get(animal.getType().getTypeId());
-                    event.setCancelled(true);
+
+                    if (event.getPlayer().getItemInHand().getType() == Material.LEASH && plugin.getConfig().getBoolean("auto-claim-on-lead", true)) {
+                        // We dont cancel the lead event.\
+                    } else {
+                        event.setCancelled(true);
+                    }
+
                     if (ca.takeCost(player)) {
                         OwnedAnimal oa = new OwnedAnimal(plugin, animal.getUniqueId(), ownerName);
                         oa.setEntityType(animal.getType());
